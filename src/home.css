@@ -1,0 +1,28 @@
+/* Home.css */
+
+.home-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: linear-gradient(to bottom right, blue, purple); /* Gradient background */
+    color: #fff; /* White text */
+    padding : 50px
+  }
+  
+  .content {
+    text-align: center;
+    max-width: 800px;
+  }
+  
+  h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+  
+  p {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  
