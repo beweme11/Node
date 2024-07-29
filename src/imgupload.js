@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './imgupload.css'; // Import CSS file for styling
 
-const ImageUpload = () => {
+const FacialSentimentAnalyzer = () => {
   const [imagePreview, setImagePreview] = useState(null);
-  const [predictions, setPredictions] = useState([]);
+  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -15,16 +15,16 @@ const ImageUpload = () => {
 
       try {
         const formData = new FormData();
-        formData.append('image', file);
+        formData.append('file', file);
 
-        const response = await fetch('http://localhost:3030/classify', {
+        const response = await fetch('http://localhost:8000/classify_image', {
           method: 'POST',
           body: formData,
         });
 
         if (response.ok) {
           const data = await response.json();
-          setPredictions(data.predictions);
+          setResult(data);
 
           // Display image preview
           const reader = new FileReader();
@@ -44,9 +44,14 @@ const ImageUpload = () => {
   };
 
   return (
-    <div className="image-upload-container">
-      <h1 className="title">Image Classifier</h1>
-      <input type="file" id="imageUpload" accept="image/*" onChange={handleImageUpload} />
+    <div className="facial-sentiment-analyzer-container">
+      <h1 className="title">Facial Sentiment Analyzer</h1>
+      <input
+        type="file"
+        id="imageUpload"
+        accept="image/*"
+        onChange={handleImageUpload}
+      />
       {imagePreview && (
         <div className="image-preview">
           <img src={imagePreview} alt="Selected" className="preview-image" />
@@ -54,16 +59,15 @@ const ImageUpload = () => {
       )}
       {loading && <p className="loading">Loading...</p>}
       {error && <p className="error">Error: {error}</p>}
-      {predictions.length > 0 && (
+      {result && (
         <div className="classification-results">
-          <h2>Classification Results:</h2>
-          {predictions.map((result, index) => (
-            <p key={index} className="result">{result.className}: {Math.round(result.probability * 100)}%</p>
-          ))}
+          <h2>Analysis Results:</h2>
+          <p><strong>Predicted Class:</strong> {result.class_label}</p>
+          {/* <p><strong>Confidence:</strong> {result.logits.max()}%</p> */}
         </div>
       )}
     </div>
   );
 };
 
-export default ImageUpload;
+export default FacialSentimentAnalyzer;

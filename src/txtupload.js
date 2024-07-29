@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import './txtupload.css';
 
-class ToxicityChecker extends Component {
+class TextSentimentAnalysis extends Component {
   state = {
     textToCheck: '',
-    predictions: [],
+    prediction: null,
     error: null
   };
 
@@ -12,10 +12,10 @@ class ToxicityChecker extends Component {
     this.setState({ textToCheck: event.target.value });
   };
 
-  handleCheckToxicity = async () => {
+  handleCheckSentiment = async () => {
     const { textToCheck } = this.state;
     try {
-      const response = await fetch('http://localhost:3030/toxicity', {
+      const response = await fetch('http://localhost:8000/analyze_text', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,55 +25,38 @@ class ToxicityChecker extends Component {
 
       if (response.ok) {
         const data = await response.json();
-        this.setState({ predictions: data.predictions, error: null });
+        this.setState({ prediction: data.result[0], error: null });
       } else {
         throw new Error('Server responded with error ' + response.status);
       }
     } catch (error) {
-      this.setState({ error: error.message, predictions: [] });
+      this.setState({ error: error.message, prediction: null });
     }
   };
 
   render() {
-    const { textToCheck, predictions, error } = this.state;
+    const { textToCheck, prediction, error } = this.state;
 
     return (
-      <div className="toxicity-checker-container">
-        <h1>Toxicity Checker</h1>
+      <div className="sentiment-analysis-container">
+        <h1>Text Sentiment Analysis</h1>
         <textarea
           className="input-text"
           rows="4"
           cols="50"
           value={textToCheck}
           onChange={this.handleTextChange}
-          placeholder="Enter text to check for toxicity"
+          placeholder="Enter text to analyze sentiment"
         ></textarea>
         <br />
-        <button className="check-button" onClick={this.handleCheckToxicity}>Check Toxicity</button>
+        <button className="check-button" onClick={this.handleCheckSentiment}>Analyze Sentiment</button>
         <br />
         {error && <p className="error">Error: {error}</p>}
-        {predictions.length > 0 && (
-          <div>
-            <h2>Toxicity Predictions:</h2>
-            <ul>
-              {predictions.map((prediction, index) => (
-                <li key={index}>
-                  <strong>{prediction.label}</strong>:
-                  <ul>
-                    {prediction.results.map((result, resultIndex) => (
-                      <li key={resultIndex}>
-                        {Object.entries(result.probabilities).map(([key, value]) => (
-                          <div key={key}>
-                            
-                            <strong>{key}:</strong> {Math.round(value * 100)}%
-                          </div>
-                        ))}
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
+        {prediction && (
+          <div className="prediction-result">
+            <h2>Sentiment Prediction:</h2>
+            <p><strong>Emotion:</strong> {prediction.label}</p>
+            <p><strong>Score:</strong> {Math.round(prediction.score * 100)}%</p>
           </div>
         )}
       </div>
@@ -81,4 +64,4 @@ class ToxicityChecker extends Component {
   }
 }
 
-export default ToxicityChecker;
+export default TextSentimentAnalysis;

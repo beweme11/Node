@@ -1,19 +1,24 @@
 import React from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-
-import ImageUpload from './imgupload';
-import Navbar from './navbar';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import ToxicityChecker from './txtupload';
+
+import Navbar from './navbar';
 import Home from './home';
 import Contact from './contact';
-import NestedDragAndDropExample from './dndtest';
+import TextSentimentAnalysis from './txtupload'; // If needed
+import FacialSentimentAnalyzer from './imgupload'; // If needed
+
 const App = () => {
   return (
-    <DndProvider backend={HTML5Backend}>
-      <NestedDragAndDropExample />
-    </DndProvider>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/toxicity" element={<TextSentimentAnalysis />} /> {/* Optional */}
+        <Route path="/classify" element={<FacialSentimentAnalyzer />} /> {/* Optional */}
+      </Routes>
+    </Router>
   );
 };
+
 export default App;
